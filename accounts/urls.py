@@ -4,8 +4,12 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import ChangePasswordView
 from .views import ForgotPasswordView
 from .views import ResetPasswordView
+from .views import YourModelDetailAPIView
+from .models import Profile
+
 
 urlpatterns = [
+
     path('register/', RegisterView.as_view()),
     path('login/', TokenObtainPairView.as_view()),
     path('logout/', LogoutView.as_view()),
@@ -17,6 +21,8 @@ urlpatterns = [
     path('change-password/', ChangePasswordView.as_view()),
     path('forgot-password/', ForgotPasswordView.as_view()),
     path('reset_password/', ResetPasswordView.as_view(), name='reset_password'),
+    path('api/profile/<int:pk>/', YourModelDetailAPIView.as_view(), name='profile'),
 
 
 ]
+
