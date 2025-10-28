@@ -9,7 +9,6 @@ from rest_framework.generics import ListCreateAPIView
 from .serializers import ChangePasswordSerializer
 from rest_framework.permissions import IsAuthenticated
 
-
 #Forget password APIVIEW
 
 from rest_framework.views import APIView
@@ -95,7 +94,6 @@ class ChangePasswordView(APIView):
             user.save()
             return Response({"detail": "Password updated successfully"})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 #Forget password APIVIEW
