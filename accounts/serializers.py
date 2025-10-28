@@ -22,6 +22,11 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['id', 'user', 'bio', 'birth_date']
+        extra_kwargs = {
+            'user': {'required': True},
+            'bio': {'required': False},
+            'birth_date': {'required': False},
+        }
 
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -59,9 +64,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 #change password and reset password
 
+from rest_framework import serializers
+
 class ChangePasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField(write_only=True, required=True)
-    new_password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
 
 #Forgot password
 

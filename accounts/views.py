@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from rest_framework import generics, permissions
 from django.contrib.auth.models import User
-from .serializers import ForgotPasswordSerializer, RegisterSerializer, UserSerializer ,ResetPasswordSerializer
+from .serializers import ForgotPasswordSerializer, RegisterSerializer, ResetPasswordSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-
-
+from rest_framework.generics import ListCreateAPIView
 from .serializers import ChangePasswordSerializer
+from rest_framework.permissions import IsAuthenticated
+
 
 #Forget password APIVIEW
 
@@ -15,10 +16,19 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from .models import Profile  
-from .serializers import ProfileSerializer  
+from .models import Profile             
+from .serializers import ProfileSerializer
+from .models import Profile
+from .serializers import ProfileSerializer
 
-class YourModelDetailAPIView(APIView):   
+
+
+class ProfileDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    lookup_field = 'id'
+
+class ProfileDetailAPIView(APIView):
     def get(self, request, pk):
         obj = get_object_or_404(Profile, pk=pk)
         serializer = ProfileSerializer(obj)
@@ -39,7 +49,10 @@ class YourModelDetailAPIView(APIView):
 
 
 
-
+class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        return Response({"message": "Authenticated!"})
 
 
 class RegisterView(generics.CreateAPIView):
@@ -47,12 +60,10 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
 
-class ProfileView(generics.RetrieveAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = UserSerializer
 
-    def get_object(self):
-        return self.request.user
+class ProfileListCreateAPIView(ListCreateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
 
 
 class LogoutView(APIView):
@@ -71,21 +82,20 @@ class LogoutView(APIView):
 
 #change password and reset password
 
-
 class ChangePasswordView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user = request.user
-        old_password = request.data.get("old_password")
-        new_password = request.data.get("new_password")
+        serializer = ChangePasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            user = request.user
+            if not user.check_password(serializer.validated_data['old_password']):
+                return Response({"old_password": "Wrong password."}, status=status.HTTP_400_BAD_REQUEST)
+            user.set_password(serializer.validated_data['new_password'])
+            user.save()
+            return Response({"detail": "Password updated successfully"})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        if not user.check_password(old_password):
-            return Response({"detail": "Old password is incorrect"}, status=400)
-
-        user.set_password(new_password)
-        user.save()
-        return Response({"detail": "Password updated successfully"}, status=200)
 
 
 #Forget password APIVIEW
