@@ -8,6 +8,13 @@ from .views import ProfileDetailAPIView
 from .models import Profile
 from .views import ProfileListCreateAPIView
 from .views import ProfileDetailView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import ReservationViewSet
+
+router = DefaultRouter()
+router.register(r'reservations', ReservationViewSet, basename='reservation')
+
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -35,6 +42,7 @@ urlpatterns = [
 
     # POST /api/auth/refresh
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('', include(router.urls)),
 
 
 ]

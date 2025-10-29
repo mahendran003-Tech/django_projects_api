@@ -21,6 +21,12 @@ from .models import Profile
 from .serializers import ProfileSerializer
 
 
+from rest_framework import viewsets
+from .models import Reservation
+from .serializers import ReservationSerializer
+
+
+
 
 class ProfileDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Profile.objects.all()
@@ -117,6 +123,9 @@ class ResetPasswordView(APIView):
             return Response({"detail": "Password has been reset."})
         return Response(serializer.errors, status=400)
 
+class ReservationViewSet(viewsets.ModelViewSet):
+    queryset = Reservation.objects.all()
+    serializer_class = ReservationSerializer
 
 
 

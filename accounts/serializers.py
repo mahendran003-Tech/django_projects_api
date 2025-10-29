@@ -11,6 +11,14 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.urls import reverse
 
+# serializers.py
+from rest_framework import serializers
+from .models import Reservation
+
+class ReservationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reservation
+        fields = '__all__'
 
 #Forgot password
 
